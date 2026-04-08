@@ -10,14 +10,17 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 
-ID_COLUMN_ALIASES: dict[str, str] = {
-    "ISO3": "ISO3",
-    "Country": "Country",
-    "Continent": "Continent",
-    "Hemisphere": "Hemisphere",
-    "Human Development Groups": "HDI_Group",
-    "UNDP Developing Regions": "UNDP_Region",
-    "HDI Rank (2021)": "HDI_Rank",
+REQUIRED_COLUMN_CANDIDATES: dict[str, list[str]] = {
+    "ISO3": ["ISO3"],
+    "Country": ["Country"],
+    "Continent": ["Continent"],
+    "Hemisphere": ["Hemisphere"],
+    "HDI_Group": ["Human Development Groups"],
+    "UNDP_Region": [
+        "UNDP Developing Regions",
+        "UNDP Developeing Regions",
+    ],
+    "HDI_Rank": ["HDI Rank (2021)"],
 }
 
 HDI_ORDINAL_MAP: dict[str, int] = {
@@ -35,14 +38,21 @@ def _resolve_required_columns(columns: list[str]) -> dict[str, str]:
     normalized_lookup = {col.strip().lower(): col for col in columns}
     resolved: dict[str, str] = {}
 
-    for source_name, normalized_name in ID_COLUMN_ALIASES.items():
-        key = source_name.strip().lower()
-        matched_col = normalized_lookup.get(key)
+    for normalized_name, candidates in REQUIRED_COLUMN_CANDIDATES.items():
+        matched_col: str | None = None
+        for candidate in candidates:
+            key = candidate.strip().lower()
+            matched_col = normalized_lookup.get(key)
+            if matched_col is not None:
+                break
+
         if matched_col is None:
             raise ValueError(
-                f"Required column '{source_name}' not found in dataset. "
+                "Required column for "
+                f"'{normalized_name}' not found. Expected one of {candidates}. "
                 f"Available columns: {columns}"
             )
+
         resolved[matched_col] = normalized_name
 
     return resolved
@@ -90,7 +100,7 @@ def load_and_reshape(csv_path: str) -> pd.DataFrame:
     work_df = raw_df.rename(columns=rename_map).copy()
 
     year_map = _extract_year_columns(list(work_df.columns))
-    id_vars = list(ID_COLUMN_ALIASES.values())
+    id_vars = list(REQUIRED_COLUMN_CANDIDATES.keys())
 
     long_df = work_df.melt(
         id_vars=id_vars,
