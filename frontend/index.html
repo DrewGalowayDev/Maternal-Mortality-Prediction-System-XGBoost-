@@ -1,0 +1,1928 @@
+<!-- # FILE: frontend/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maternal Mortality Intelligence Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --bg-soft: #10182b;
+      --bg-card: #0f1727;
+      --border: rgba(0, 212, 170, 0.25);
+      --text: #e9f5ff;
+      --muted: #86a4bf;
+      --accent: #00d4aa;
+      --coral: #ff6b6b;
+      --gold: #ffd166;
+      --blue: #4fa3ff;
+      --violet: #89a0ff;
+      --ok: #6ce087;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+      --radius: 16px;
+      --radius-lg: 22px;
+      --maxw: 1440px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(0, 212, 170, 0.13), transparent 38%),
+        radial-gradient(circle at 85% 80%, rgba(255, 107, 107, 0.12), transparent 35%),
+        linear-gradient(130deg, #0a0e1a 0%, #0d1222 45%, #0a0e1a 100%);
+      color: var(--text);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      line-height: 1.45;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(0, 212, 170, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 170, 0.08) 1px, transparent 1px);
+      background-size: 30px 30px;
+      z-index: -1;
+    }
+
+    .app-shell {
+      width: min(100%, var(--maxw));
+      margin: 0 auto;
+      padding: 18px 18px 40px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      background: linear-gradient(160deg, rgba(16, 24, 43, 0.92), rgba(10, 14, 26, 0.95));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 212, 170, 0.1), transparent 70%);
+      right: -40px;
+      top: -50px;
+      pointer-events: none;
+    }
+
+    .hero {
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      background:
+        linear-gradient(130deg, rgba(0, 212, 170, 0.13), rgba(255, 107, 107, 0.08) 55%, rgba(10, 14, 26, 0.95)),
+        rgba(15, 23, 39, 0.95);
+      border: 1px solid rgba(0, 212, 170, 0.36);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 12px;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .hero::before {
+      content: "WHO ANALYTICS GRID";
+      position: absolute;
+      right: 20px;
+      top: 18px;
+      font-size: 11px;
+      color: rgba(233, 245, 255, 0.45);
+      letter-spacing: 1.4px;
+      z-index: -1;
+    }
+
+    .hero-title {
+      font-family: "Syne", "Segoe UI", sans-serif;
+      font-size: clamp(1.4rem, 2vw, 2rem);
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      color: #f7fdff;
+    }
+
+    .hero-subtitle {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .hero-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .metrics-badge {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: rgba(10, 14, 26, 0.7);
+      border: 1px solid rgba(79, 163, 255, 0.35);
+      border-radius: 999px;
+      padding: 8px 14px;
+      color: #bfe3ff;
+      font-size: 0.82rem;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.8);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.75); }
+      70% { box-shadow: 0 0 0 10px rgba(0, 212, 170, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 212, 170, 0); }
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: #16213b;
+      color: #d5e9ff;
+      padding: 9px 14px;
+      font-family: inherit;
+      font-size: 0.84rem;
+      cursor: pointer;
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(0, 212, 170, 0.7);
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none;
+    }
+
+    .btn-accent {
+      background: linear-gradient(100deg, rgba(0, 212, 170, 0.22), rgba(79, 163, 255, 0.16));
+      border-color: rgba(0, 212, 170, 0.55);
+      color: #dffff7;
+    }
+
+    .btn-warning {
+      border-color: rgba(255, 209, 102, 0.5);
+      color: #ffe3a6;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: rgba(10, 14, 26, 0.65);
+      border: 1px solid rgba(79, 163, 255, 0.22);
+      border-radius: 14px;
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+      min-height: 118px;
+    }
+
+    .stat-label {
+      font-size: 0.73rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .stat-value {
+      font-size: 1.24rem;
+      font-weight: 700;
+      color: #f4fcff;
+      font-family: "Syne", "Segoe UI", sans-serif;
+    }
+
+    .stat-meta {
+      color: #8fe6d0;
+      font-size: 0.78rem;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 14px;
+    }
+
+    .panel-title {
+      font-family: "Syne", "Segoe UI", sans-serif;
+      font-size: 1.06rem;
+      margin-bottom: 10px;
+      color: #f3fbff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-subtitle {
+      color: var(--muted);
+      font-size: 0.79rem;
+      margin-bottom: 10px;
+    }
+
+    .explorer-layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 14px;
+      min-height: 460px;
+    }
+
+    .filters {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      background: rgba(10, 14, 26, 0.5);
+      border: 1px solid rgba(0, 212, 170, 0.18);
+      border-radius: 12px;
+      padding: 12px;
+      height: fit-content;
+    }
+
+    .filters label {
+      font-size: 0.74rem;
+      color: #a8c5dd;
+      margin-bottom: 4px;
+      display: block;
+      letter-spacing: 0.4px;
+    }
+
+    .filters input,
+    .filters select,
+    .prediction-form input,
+    .prediction-form select {
+      width: 100%;
+      background: #111a2f;
+      border: 1px solid rgba(79, 163, 255, 0.26);
+      border-radius: 9px;
+      color: #e9f5ff;
+      padding: 8px 10px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      outline: none;
+      transition: border-color 0.14s ease;
+    }
+
+    .filters input:focus,
+    .filters select:focus,
+    .prediction-form input:focus,
+    .prediction-form select:focus {
+      border-color: rgba(0, 212, 170, 0.7);
+    }
+
+    .country-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 10px;
+      align-content: start;
+    }
+
+    .country-card {
+      background: rgba(9, 12, 22, 0.82);
+      border: 1px solid rgba(79, 163, 255, 0.24);
+      border-radius: 12px;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .country-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 212, 170, 0.8);
+      box-shadow: 0 8px 24px rgba(0, 212, 170, 0.18);
+    }
+
+    .country-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .country-name {
+      font-family: "Syne", "Segoe UI", sans-serif;
+      font-size: 0.94rem;
+      color: #f7fdff;
+      line-height: 1.2;
+    }
+
+    .country-iso {
+      font-size: 0.72rem;
+      color: #8eb0c8;
+    }
+
+    .country-mmr {
+      font-size: 1.15rem;
+      color: #ffc5c5;
+      font-weight: 700;
+    }
+
+    .sparkline {
+      width: 100%;
+      height: 34px;
+      overflow: visible;
+    }
+
+    .country-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.74rem;
+      color: #92b4cb;
+    }
+
+    .trend-up { color: var(--coral); }
+    .trend-down { color: var(--ok); }
+
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .chart-wrap {
+      min-height: 260px;
+      position: relative;
+    }
+
+    .chart-wrap canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .toggle-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .toggle-pill {
+      border: 1px solid rgba(79, 163, 255, 0.42);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: rgba(17, 26, 47, 0.78);
+      color: #cae2ff;
+      font-size: 0.72rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.14s ease, border-color 0.14s ease;
+    }
+
+    .toggle-pill.active {
+      background: rgba(0, 212, 170, 0.2);
+      border-color: rgba(0, 212, 170, 0.85);
+      color: #defff6;
+    }
+
+    .tables-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.77rem;
+    }
+
+    thead th {
+      text-align: left;
+      color: #9ec0da;
+      border-bottom: 1px solid rgba(79, 163, 255, 0.26);
+      padding: 8px 6px;
+      font-weight: 500;
+    }
+
+    tbody td {
+      border-bottom: 1px solid rgba(79, 163, 255, 0.12);
+      padding: 8px 6px;
+      color: #dbefff;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255, 107, 107, 0.95), rgba(255, 209, 102, 0.95));
+    }
+
+    .progress-fill.good {
+      background: linear-gradient(90deg, rgba(0, 212, 170, 0.95), rgba(79, 163, 255, 0.95));
+    }
+
+    .prediction-form {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 12px;
+    }
+
+    .prediction-form .full {
+      grid-column: 1 / -1;
+    }
+
+    .result-strip {
+      margin-top: 12px;
+      border: 1px solid rgba(0, 212, 170, 0.35);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(6, 16, 28, 0.8);
+    }
+
+    .result-value {
+      font-size: 1.4rem;
+      font-family: "Syne", "Segoe UI", sans-serif;
+      color: #e9fff8;
+    }
+
+    .risk-badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border: 1px solid transparent;
+    }
+
+    .risk-low { color: #cffff2; background: rgba(0, 212, 170, 0.2); border-color: rgba(0, 212, 170, 0.65); }
+    .risk-medium { color: #fff0c4; background: rgba(255, 209, 102, 0.18); border-color: rgba(255, 209, 102, 0.62); }
+    .risk-high { color: #ffd3d3; background: rgba(255, 107, 107, 0.2); border-color: rgba(255, 107, 107, 0.65); }
+    .risk-critical { color: #fff; background: rgba(198, 40, 40, 0.35); border-color: rgba(255, 107, 107, 0.95); }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 5, 10, 0.76);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-panel {
+      width: min(1100px, 100%);
+      max-height: 90vh;
+      overflow: auto;
+      border-radius: 16px;
+      background: linear-gradient(160deg, #10182b, #0a0e1a);
+      border: 1px solid rgba(0, 212, 170, 0.34);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .modal-title {
+      font-family: "Syne", "Segoe UI", sans-serif;
+      font-size: 1.15rem;
+      color: #f2fcff;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .meta-item {
+      background: rgba(12, 19, 36, 0.72);
+      border: 1px solid rgba(79, 163, 255, 0.25);
+      border-radius: 10px;
+      padding: 8px;
+    }
+
+    .meta-item small {
+      color: #8fb0c7;
+      font-size: 0.7rem;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .meta-item strong {
+      color: #ecf8ff;
+      font-size: 0.88rem;
+    }
+
+    .modal-stats {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(79, 163, 255, 0.12);
+      border: 1px solid rgba(79, 163, 255, 0.4);
+      color: #d7ebff;
+      font-size: 0.76rem;
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 10, 20, 0.8);
+      display: grid;
+      place-items: center;
+      z-index: 200;
+      transition: opacity 0.2s ease;
+    }
+
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 4px solid rgba(0, 212, 170, 0.2);
+      border-top-color: var(--accent);
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-copy {
+      text-align: center;
+      color: #ceecff;
+      font-size: 0.84rem;
+      letter-spacing: 0.4px;
+    }
+
+    .status-line {
+      min-height: 18px;
+      color: #9fcae4;
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #a7c6de;
+      border: 1px dashed rgba(79, 163, 255, 0.35);
+      border-radius: 12px;
+      padding: 24px;
+      background: rgba(10, 14, 26, 0.4);
+    }
+
+    @media (max-width: 1180px) {
+      .overview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-two,
+      .tables-row {
+        grid-template-columns: 1fr;
+      }
+
+      .explorer-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .prediction-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app-shell {
+        padding: 12px;
+      }
+
+      .hero {
+        padding: 16px;
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .prediction-form {
+        grid-template-columns: 1fr;
+      }
+
+      .country-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="loadingOverlay" class="loading-overlay">
+    <div>
+      <div class="spinner"></div>
+      <div id="loadingText" class="loading-copy">Initializing WHO mission dashboard...</div>
+    </div>
+  </div>
+
+  <div class="app-shell">
+    <header class="hero">
+      <h1 class="hero-title">Maternal Mortality Intelligence Platform</h1>
+      <p class="hero-subtitle">XGBoost-Powered Global Health Analytics</p>
+      <div class="hero-row">
+        <div id="metricsBadge" class="metrics-badge">
+          <span class="pulse"></span>
+          <span>Loading model metrics...</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button id="retrainBtn" class="btn btn-accent">Retrain Model</button>
+        </div>
+      </div>
+      <div id="statusLine" class="status-line"></div>
+    </header>
+
+    <section class="panel">
+      <h2 class="panel-title">Global Overview Panel</h2>
+      <div class="overview-grid">
+        <article class="stat-card">
+          <span class="stat-label">Total Countries Analyzed</span>
+          <span id="statCountries" class="stat-value">-</span>
+          <span class="stat-meta">Coverage in latest year snapshot</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Global Average MMR</span>
+          <span id="statGlobalAvg" class="stat-value">-</span>
+          <span class="stat-meta">Mean MMR across all countries</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Highest MMR Country</span>
+          <span id="statHighestCountry" class="stat-value">-</span>
+          <span id="statHighestValue" class="stat-meta">-</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Biggest Improvement</span>
+          <span id="statImprovedCountry" class="stat-value">-</span>
+          <span id="statImprovedValue" class="stat-meta">-</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">Country Explorer</h2>
+      <p class="panel-subtitle">Search and filter 195 countries, then open any card for historical trends and forecast intelligence.</p>
+      <div class="explorer-layout">
+        <aside class="filters">
+          <div>
+            <label for="searchInput">Search Country</label>
+            <input id="searchInput" type="text" placeholder="e.g., India">
+          </div>
+          <div>
+            <label for="continentFilter">Continent</label>
+            <select id="continentFilter">
+              <option value="all">All Continents</option>
+            </select>
+          </div>
+          <div>
+            <label for="hdiFilter">HDI Group</label>
+            <select id="hdiFilter">
+              <option value="all">All HDI Groups</option>
+            </select>
+          </div>
+          <div>
+            <label for="undpFilter">UNDP Region</label>
+            <select id="undpFilter">
+              <option value="all">All UNDP Regions</option>
+            </select>
+          </div>
+          <div>
+            <label for="sortFilter">Sort</label>
+            <select id="sortFilter">
+              <option value="mmr_desc">MMR (High → Low)</option>
+              <option value="improvement_desc">Improvement (High → Low)</option>
+              <option value="name_asc">Country Name (A → Z)</option>
+            </select>
+          </div>
+          <button id="resetFiltersBtn" class="btn">Reset Filters</button>
+        </aside>
+
+        <div>
+          <div id="countryGrid" class="country-grid"></div>
+          <div class="pagination">
+            <button id="prevPageBtn" class="btn">Prev</button>
+            <span id="pageInfo">Page 1 / 1</span>
+            <button id="nextPageBtn" class="btn">Next</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid-two">
+      <section class="panel">
+        <h2 class="panel-title">Continent Comparison Chart</h2>
+        <div id="continentToggles" class="toggle-row"></div>
+        <div class="chart-wrap"><canvas id="continentChart"></canvas></div>
+      </section>
+      <section class="panel">
+        <h2 class="panel-title">HDI Group Analysis</h2>
+        <div class="chart-wrap"><canvas id="hdiChart"></canvas></div>
+      </section>
+    </div>
+
+    <div class="grid-two">
+      <section class="panel">
+        <h2 class="panel-title">Feature Importance Chart</h2>
+        <div class="chart-wrap"><canvas id="featureChart"></canvas></div>
+      </section>
+      <section class="panel">
+        <h2 class="panel-title">HDI Rank vs MMR Correlation</h2>
+        <p class="panel-subtitle" id="correlationHeadline">Loading correlation intelligence...</p>
+        <div class="chart-wrap"><canvas id="correlationChart"></canvas></div>
+      </section>
+    </div>
+
+    <section class="panel">
+      <h2 class="panel-title">Top 10 Tables</h2>
+      <div class="tables-row">
+        <div>
+          <h3 class="panel-subtitle">10 Highest MMR Countries (Latest Year)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Country</th>
+                <th>MMR</th>
+                <th>Risk</th>
+              </tr>
+            </thead>
+            <tbody id="worstTableBody"></tbody>
+          </table>
+        </div>
+        <div>
+          <h3 class="panel-subtitle">10 Most Improved Countries (1990 → Latest)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Country</th>
+                <th>Improvement</th>
+                <th>Progress</th>
+              </tr>
+            </thead>
+            <tbody id="improvedTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">Custom Prediction Form</h2>
+      <p class="panel-subtitle">Submit manual features to estimate MMR and classify risk levels in real time.</p>
+      <form id="predictionForm" class="prediction-form">
+        <div>
+          <label for="predYear">Year</label>
+          <input id="predYear" type="number" min="1990" max="2050" value="2028" required>
+        </div>
+        <div>
+          <label for="predHdiRank">HDI Rank</label>
+          <input id="predHdiRank" type="number" min="1" max="200" step="0.1" value="95" required>
+        </div>
+        <div>
+          <label for="predContinent">Continent</label>
+          <select id="predContinent" required></select>
+        </div>
+        <div>
+          <label for="predHdiGroup">HDI Group</label>
+          <select id="predHdiGroup" required>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Very High">Very High</option>
+          </select>
+        </div>
+        <div>
+          <label for="predUndp">UNDP Region</label>
+          <select id="predUndp" required></select>
+        </div>
+        <div>
+          <label for="predLag1">Lag_1</label>
+          <input id="predLag1" type="number" min="0" step="0.01" value="235" required>
+        </div>
+        <div>
+          <label for="predLag2">Lag_2</label>
+          <input id="predLag2" type="number" min="0" step="0.01" value="248" required>
+        </div>
+        <div>
+          <label for="predLag3">Lag_3</label>
+          <input id="predLag3" type="number" min="0" step="0.01" value="262" required>
+        </div>
+        <div>
+          <label for="predRolling">Rolling Mean (5y)</label>
+          <input id="predRolling" type="number" min="0" step="0.01" value="255" required>
+        </div>
+        <div class="full" style="display:flex; gap:10px; align-items:center;">
+          <button type="submit" class="btn btn-accent">Predict MMR</button>
+          <span style="color:#8fb4cb; font-size:0.76rem;">mmr_change is auto-computed as Lag_1 - Lag_2</span>
+        </div>
+      </form>
+      <div class="result-strip">
+        <div>
+          <div style="font-size:0.74rem; color:#9fc4db; margin-bottom:4px;">Predicted Maternal Mortality Ratio</div>
+          <div id="predictionValue" class="result-value">--</div>
+        </div>
+        <div id="riskBadge" class="risk-badge risk-low">Awaiting Input</div>
+      </div>
+    </section>
+  </div>
+
+  <div id="countryModal" class="modal">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <div>
+          <h3 id="modalTitle" class="modal-title">Country Forecast</h3>
+          <p id="modalSubtitle" class="panel-subtitle" style="margin:0;"></p>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button id="downloadForecastBtn" class="btn btn-warning">Download Forecast CSV</button>
+          <button id="closeModalBtn" class="btn">Close</button>
+        </div>
+      </div>
+      <div id="modalMeta" class="meta-grid"></div>
+      <div class="chart-wrap" style="min-height:340px;"><canvas id="countryChart"></canvas></div>
+      <div class="modal-stats" id="modalStats"></div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:8000/api';
+    const CHART_URL = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js';
+
+    const state = {
+      countries: [],
+      filteredCountries: [],
+      continentData: {},
+      hdiData: {},
+      modelMetrics: {},
+      selectedCountry: null,
+      filters: { continent: 'all', hdiGroup: 'all', undpRegion: 'all', search: '', sort: 'mmr_desc' },
+      topWorst: { top_worst: [], most_improved: [] },
+      correlation: { year: null, pearson_correlation: 0, points: [] },
+      pagination: { page: 1, pageSize: 20 },
+      charts: {
+        continent: null,
+        hdi: null,
+        feature: null,
+        country: null,
+        correlation: null,
+      },
+      modalPayload: null,
+    };
+
+    function showLoading(message = 'Loading dashboard intelligence...') {
+      const overlay = document.getElementById('loadingOverlay');
+      const loadingText = document.getElementById('loadingText');
+      loadingText.textContent = message;
+      overlay.classList.remove('hidden');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.add('hidden');
+    }
+
+    function setStatus(message, isError = false) {
+      const statusLine = document.getElementById('statusLine');
+      statusLine.textContent = message;
+      statusLine.style.color = isError ? '#ff9d9d' : '#9fcae4';
+    }
+
+    function formatNumber(value, digits = 2) {
+      const num = Number(value);
+      if (Number.isNaN(num)) {
+        return '--';
+      }
+      return new Intl.NumberFormat('en-US', {
+        maximumFractionDigits: digits,
+      }).format(num);
+    }
+
+    function isoToFlag(iso3) {
+      const value = String(iso3 || '').slice(0, 2).toUpperCase();
+      if (value.length < 2) {
+        return '🌐';
+      }
+      return [...value]
+        .map(char => String.fromCodePoint(127397 + char.charCodeAt(0)))
+        .join('');
+    }
+
+    function getRiskLevel(mmr) {
+      if (mmr < 100) {
+        return { label: 'Low', cls: 'risk-low' };
+      }
+      if (mmr < 300) {
+        return { label: 'Medium', cls: 'risk-medium' };
+      }
+      if (mmr < 600) {
+        return { label: 'High', cls: 'risk-high' };
+      }
+      return { label: 'Critical', cls: 'risk-critical' };
+    }
+
+    function cacheWrite(key, value) {
+      localStorage.setItem(key, JSON.stringify({
+        timestamp: Date.now(),
+        data: value,
+      }));
+    }
+
+    function cacheRead(key) {
+      const raw = localStorage.getItem(key);
+      if (!raw) {
+        return null;
+      }
+      try {
+        return JSON.parse(raw).data;
+      } catch (_error) {
+        return null;
+      }
+    }
+
+    async function ensureChartJs() {
+      if (window.Chart) {
+        return;
+      }
+
+      const cacheKey = 'chartjs-bundle-v4';
+
+      try {
+        const response = await fetch(CHART_URL, { cache: 'force-cache' });
+        if (!response.ok) {
+          throw new Error(`Unable to fetch Chart.js (${response.status})`);
+        }
+        const source = await response.text();
+        cacheWrite(cacheKey, source);
+
+        const script = document.createElement('script');
+        script.textContent = source;
+        document.head.appendChild(script);
+      } catch (error) {
+        const cachedSource = cacheRead(cacheKey);
+        if (!cachedSource) {
+          throw error;
+        }
+        const fallbackScript = document.createElement('script');
+        fallbackScript.textContent = cachedSource;
+        document.head.appendChild(fallbackScript);
+      }
+
+      if (!window.Chart) {
+        throw new Error('Chart.js failed to initialize.');
+      }
+
+      Chart.defaults.color = '#cde6fb';
+      Chart.defaults.borderColor = 'rgba(79, 163, 255, 0.18)';
+      Chart.defaults.font.family = 'DM Mono, monospace';
+    }
+
+    async function safeFetch(endpoint, cacheKey) {
+      try {
+        const response = await fetch(`${API}${endpoint}`);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        cacheWrite(cacheKey, data);
+        return data;
+      } catch (error) {
+        const cached = cacheRead(cacheKey);
+        if (cached) {
+          setStatus(`Using cached data for ${endpoint}. Network unavailable.`, true);
+          return cached;
+        }
+        throw error;
+      }
+    }
+
+    async function postWithCache(endpoint, payload, cacheKey) {
+      try {
+        const response = await fetch(`${API}${endpoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+          const detail = await response.text();
+          throw new Error(detail || `HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        cacheWrite(cacheKey, data);
+        return data;
+      } catch (error) {
+        const cached = cacheRead(cacheKey);
+        if (cached) {
+          setStatus(`Using cached prediction for ${endpoint}.`, true);
+          return cached;
+        }
+        throw error;
+      }
+    }
+
+    async function fetchCountries() {
+      const countries = await safeFetch('/countries', 'api-countries');
+      state.countries = countries;
+      state.filteredCountries = [...countries];
+    }
+
+    async function fetchAnalytics() {
+      const [continent, hdi, topWorst] = await Promise.all([
+        safeFetch('/analytics/continents', 'api-continents'),
+        safeFetch('/analytics/hdi-groups', 'api-hdi-groups'),
+        safeFetch('/analytics/top-worst', 'api-top-worst'),
+      ]);
+
+      state.continentData = continent;
+      state.hdiData = hdi;
+      state.topWorst = topWorst;
+    }
+
+    async function fetchModelMetrics() {
+      const modelMetrics = await safeFetch('/model/metrics', 'api-model-metrics');
+      state.modelMetrics = modelMetrics;
+    }
+
+    async function fetchCorrelation() {
+      const correlation = await safeFetch('/analytics/correlation', 'api-correlation');
+      state.correlation = correlation;
+    }
+
+    function updateModelMetricsBadge() {
+      const badge = document.getElementById('metricsBadge');
+      const metrics = state.modelMetrics;
+
+      badge.innerHTML = `
+        <span class="pulse"></span>
+        <span>MAE: ${formatNumber(metrics.mae, 3)}</span>
+        <span>|</span>
+        <span>RMSE: ${formatNumber(metrics.rmse, 3)}</span>
+        <span>|</span>
+        <span>R²: ${formatNumber(metrics.r2, 4)}</span>
+      `;
+    }
+
+    function updateOverviewStats() {
+      const countries = state.countries;
+      if (!countries.length) {
+        return;
+      }
+
+      const total = countries.length;
+      const avg = countries.reduce((sum, item) => sum + Number(item.latest_mmr || 0), 0) / total;
+
+      const highest = [...countries].sort((a, b) => b.latest_mmr - a.latest_mmr)[0];
+      const improved = [...countries].sort((a, b) => b.pct_change - a.pct_change)[0];
+
+      document.getElementById('statCountries').textContent = formatNumber(total, 0);
+      document.getElementById('statGlobalAvg').textContent = formatNumber(avg, 1);
+      document.getElementById('statHighestCountry').textContent = highest.country;
+      document.getElementById('statHighestValue').textContent = `${formatNumber(highest.latest_mmr, 1)} deaths/100k`;
+      document.getElementById('statImprovedCountry').textContent = improved.country;
+      document.getElementById('statImprovedValue').textContent = `${formatNumber(improved.pct_change, 1)}% reduction`;
+    }
+
+    function populateFilterOptions() {
+      const continentSelect = document.getElementById('continentFilter');
+      const hdiSelect = document.getElementById('hdiFilter');
+      const undpSelect = document.getElementById('undpFilter');
+
+      const predContinent = document.getElementById('predContinent');
+      const predUndp = document.getElementById('predUndp');
+
+      const continents = [...new Set(state.countries.map(item => item.continent))].sort();
+      const hdiGroups = [...new Set(state.countries.map(item => item.hdi_group))].sort();
+      const undpRegions = [...new Set((state.topWorst.top_worst || []).map(item => item.undp_region).filter(Boolean))];
+
+      continents.forEach(value => {
+        const option = `<option value="${value}">${value}</option>`;
+        continentSelect.insertAdjacentHTML('beforeend', option);
+        predContinent.insertAdjacentHTML('beforeend', option);
+      });
+
+      hdiGroups.forEach(value => {
+        hdiSelect.insertAdjacentHTML('beforeend', `<option value="${value}">${value}</option>`);
+      });
+
+      // Build UNDP list from country details endpoint cache if available, otherwise fallback to continent data map.
+      let undpValues = [...new Set(state.countries.map(item => item.undp_region).filter(Boolean))];
+      if (!undpValues.length && undpRegions.length) {
+        undpValues = [...new Set(undpRegions)];
+      }
+
+      // If still empty, use known global region set from schema.
+      if (!undpValues.length) {
+        undpValues = ['AS', 'EAP', 'ECA', 'LAC', 'SA', 'SSA'];
+      }
+
+      undpValues.sort().forEach(value => {
+        undpSelect.insertAdjacentHTML('beforeend', `<option value="${value}">${value}</option>`);
+        predUndp.insertAdjacentHTML('beforeend', `<option value="${value}">${value}</option>`);
+      });
+    }
+
+    function applyFilters() {
+      let data = [...state.countries];
+
+      if (state.filters.search) {
+        const query = state.filters.search.toLowerCase();
+        data = data.filter(item => item.country.toLowerCase().includes(query));
+      }
+
+      if (state.filters.continent !== 'all') {
+        data = data.filter(item => item.continent === state.filters.continent);
+      }
+
+      if (state.filters.hdiGroup !== 'all') {
+        data = data.filter(item => item.hdi_group === state.filters.hdiGroup);
+      }
+
+      if (state.filters.undpRegion !== 'all') {
+        data = data.filter(item => (item.undp_region || '') === state.filters.undpRegion);
+      }
+
+      switch (state.filters.sort) {
+        case 'improvement_desc':
+          data.sort((a, b) => b.pct_change - a.pct_change);
+          break;
+        case 'name_asc':
+          data.sort((a, b) => a.country.localeCompare(b.country));
+          break;
+        case 'mmr_desc':
+        default:
+          data.sort((a, b) => b.latest_mmr - a.latest_mmr);
+          break;
+      }
+
+      state.filteredCountries = data;
+      const totalPages = Math.max(1, Math.ceil(state.filteredCountries.length / state.pagination.pageSize));
+      if (state.pagination.page > totalPages) {
+        state.pagination.page = totalPages;
+      }
+    }
+
+    function buildSparkline(initial, latest) {
+      const start = Number(initial || 0);
+      const end = Number(latest || 0);
+      const max = Math.max(start, end, 1);
+
+      const y1 = 32 - ((start / max) * 26);
+      const y2 = 32 - ((end / max) * 26);
+      const stroke = end > start ? '#ff6b6b' : '#00d4aa';
+
+      return `
+        <svg class="sparkline" viewBox="0 0 120 34" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="0" y1="${y1.toFixed(1)}" x2="120" y2="${y2.toFixed(1)}" stroke="${stroke}" stroke-width="2.3" stroke-linecap="round"></line>
+          <circle cx="0" cy="${y1.toFixed(1)}" r="2.2" fill="#9cc8ff"></circle>
+          <circle cx="120" cy="${y2.toFixed(1)}" r="2.2" fill="${stroke}"></circle>
+        </svg>
+      `;
+    }
+
+    function renderCountryGrid() {
+      applyFilters();
+
+      const grid = document.getElementById('countryGrid');
+      grid.innerHTML = '';
+
+      if (!state.filteredCountries.length) {
+        grid.innerHTML = `<div class="empty-state">No countries matched your filters.</div>`;
+        document.getElementById('pageInfo').textContent = 'Page 1 / 1';
+        return;
+      }
+
+      const { page, pageSize } = state.pagination;
+      const start = (page - 1) * pageSize;
+      const pageItems = state.filteredCountries.slice(start, start + pageSize);
+
+      pageItems.forEach(country => {
+        const trendClass = country.pct_change >= 0 ? 'trend-down' : 'trend-up';
+        const trendLabel = country.pct_change >= 0 ? 'Reduction' : 'Increase';
+
+        const card = document.createElement('article');
+        card.className = 'country-card';
+        card.innerHTML = `
+          <div class="country-head">
+            <div>
+              <div class="country-name">${isoToFlag(country.iso3)} ${country.country}</div>
+              <div class="country-iso">${country.iso3} • ${country.continent}</div>
+            </div>
+            <div class="country-mmr">${formatNumber(country.latest_mmr, 1)}</div>
+          </div>
+          ${buildSparkline(country.mmr_1990, country.latest_mmr)}
+          <div class="country-foot">
+            <span>${country.hdi_group}</span>
+            <span class="${trendClass}">${trendLabel}: ${formatNumber(country.pct_change, 1)}%</span>
+          </div>
+        `;
+
+        card.addEventListener('click', () => openCountryModal(country.iso3));
+        grid.appendChild(card);
+      });
+
+      const totalPages = Math.max(1, Math.ceil(state.filteredCountries.length / state.pagination.pageSize));
+      document.getElementById('pageInfo').textContent = `Page ${state.pagination.page} / ${totalPages}`;
+      document.getElementById('prevPageBtn').disabled = state.pagination.page <= 1;
+      document.getElementById('nextPageBtn').disabled = state.pagination.page >= totalPages;
+    }
+
+    function renderContinentChart(data) {
+      const grouped = {};
+      const yearsSet = new Set();
+
+      data.forEach(item => {
+        const continent = item.continent;
+        if (!grouped[continent]) {
+          grouped[continent] = {};
+        }
+        grouped[continent][item.year] = Number(item.avg_mmr);
+        yearsSet.add(item.year);
+      });
+
+      const years = [...yearsSet].sort((a, b) => a - b);
+      const colors = ['#00d4aa', '#ff6b6b', '#ffd166', '#4fa3ff', '#89a0ff', '#9de56b', '#fca7ff'];
+
+      const datasets = Object.keys(grouped).sort().map((continent, index) => ({
+        label: continent,
+        data: years.map(year => grouped[continent][year] ?? null),
+        borderColor: colors[index % colors.length],
+        backgroundColor: `${colors[index % colors.length]}33`,
+        borderWidth: 2.2,
+        tension: 0.22,
+        pointRadius: 0,
+      }));
+
+      if (state.charts.continent) {
+        state.charts.continent.destroy();
+      }
+
+      const context = document.getElementById('continentChart').getContext('2d');
+      state.charts.continent = new Chart(context, {
+        type: 'line',
+        data: { labels: years, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: item => `${item.dataset.label}: ${formatNumber(item.raw, 2)}`,
+              },
+            },
+          },
+          scales: {
+            x: { title: { display: true, text: 'Year' } },
+            y: { title: { display: true, text: 'Avg MMR' } },
+          },
+        },
+      });
+
+      const toggles = document.getElementById('continentToggles');
+      toggles.innerHTML = '';
+      datasets.forEach((dataset, index) => {
+        const pill = document.createElement('button');
+        pill.className = 'toggle-pill active';
+        pill.textContent = dataset.label;
+        pill.style.borderColor = dataset.borderColor;
+
+        pill.addEventListener('click', () => {
+          const visible = state.charts.continent.isDatasetVisible(index);
+          state.charts.continent.setDatasetVisibility(index, !visible);
+          state.charts.continent.update();
+          pill.classList.toggle('active', !visible);
+        });
+
+        toggles.appendChild(pill);
+      });
+    }
+
+    function renderHDIChart(data) {
+      const grouped = {};
+      const yearsSet = new Set();
+
+      data.forEach(item => {
+        const key = item.hdi_group;
+        if (!grouped[key]) {
+          grouped[key] = {};
+        }
+        grouped[key][item.year] = Number(item.avg_mmr);
+        yearsSet.add(item.year);
+      });
+
+      const years = [...yearsSet].sort((a, b) => a - b);
+      const colors = {
+        'Low': '#ff6b6b',
+        'Medium': '#ffd166',
+        'High': '#4fa3ff',
+        'Very High': '#00d4aa',
+      };
+
+      const datasets = Object.keys(grouped).map(label => ({
+        label,
+        data: years.map(year => grouped[label][year] ?? null),
+        borderColor: colors[label] || '#89a0ff',
+        backgroundColor: `${colors[label] || '#89a0ff'}40`,
+        fill: true,
+        tension: 0.2,
+        pointRadius: 0,
+        stack: 'mmr',
+      }));
+
+      if (state.charts.hdi) {
+        state.charts.hdi.destroy();
+      }
+
+      const context = document.getElementById('hdiChart').getContext('2d');
+      state.charts.hdi = new Chart(context, {
+        type: 'line',
+        data: { labels: years, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: {
+              callbacks: {
+                label: item => `${item.dataset.label}: ${formatNumber(item.raw, 2)}`,
+              },
+            },
+          },
+          scales: {
+            x: { title: { display: true, text: 'Year' } },
+            y: {
+              stacked: true,
+              title: { display: true, text: 'Avg MMR (stacked area)' },
+            },
+          },
+        },
+      });
+    }
+
+    function renderFeatureImportance(data) {
+      const records = [...(data.feature_importance || [])].sort((a, b) => b.importance - a.importance);
+      const labels = records.map(item => item.feature);
+      const values = records.map(item => Number(item.importance));
+
+      if (state.charts.feature) {
+        state.charts.feature.destroy();
+      }
+
+      const context = document.getElementById('featureChart').getContext('2d');
+      state.charts.feature = new Chart(context, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Importance',
+            data: values,
+            backgroundColor: labels.map((_, index) => `rgba(${20 + (index * 12)}, ${120 + (index * 8)}, ${190 - (index * 4)}, 0.72)`),
+            borderColor: '#00d4aa',
+            borderWidth: 1,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: item => `Importance: ${formatNumber(item.raw, 5)}`,
+              },
+            },
+          },
+          scales: {
+            x: { title: { display: true, text: 'Importance' } },
+          },
+        },
+      });
+    }
+
+    function renderCorrelationChart() {
+      const points = state.correlation.points || [];
+
+      if (state.charts.correlation) {
+        state.charts.correlation.destroy();
+      }
+
+      const context = document.getElementById('correlationChart').getContext('2d');
+      state.charts.correlation = new Chart(context, {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            label: `Countries (${state.correlation.year || 'latest'})`,
+            data: points.map(point => ({ x: Number(point.hdi_rank), y: Number(point.mmr) })),
+            backgroundColor: 'rgba(0, 212, 170, 0.5)',
+            borderColor: '#00d4aa',
+            borderWidth: 1,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: contextPoint => {
+                  const source = points[contextPoint.dataIndex];
+                  return `${source.country} • HDI ${formatNumber(source.hdi_rank, 1)} • MMR ${formatNumber(source.mmr, 1)}`;
+                },
+              },
+            },
+          },
+          scales: {
+            x: { title: { display: true, text: 'HDI Rank (lower is better)' } },
+            y: { title: { display: true, text: 'MMR' } },
+          },
+        },
+      });
+
+      document.getElementById('correlationHeadline').textContent =
+        `Pearson correlation (${state.correlation.year}): ${formatNumber(state.correlation.pearson_correlation, 4)} (HDI rank vs MMR)`;
+    }
+
+    function renderTopTables(data) {
+      const worstBody = document.getElementById('worstTableBody');
+      const improvedBody = document.getElementById('improvedTableBody');
+      worstBody.innerHTML = '';
+      improvedBody.innerHTML = '';
+
+      const worst = data.top_worst || [];
+      const improved = data.most_improved || [];
+
+      const maxWorst = Math.max(...worst.map(item => Number(item.latest_mmr || 0)), 1);
+      const maxImproved = Math.max(...improved.map(item => Number(item.pct_change || 0)), 1);
+
+      worst.forEach(item => {
+        const width = (Number(item.latest_mmr) / maxWorst) * 100;
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.country}</td>
+          <td>${formatNumber(item.latest_mmr, 1)}</td>
+          <td>
+            <div class="progress-track"><div class="progress-fill" style="width:${width.toFixed(1)}%"></div></div>
+          </td>
+        `;
+        worstBody.appendChild(row);
+      });
+
+      improved.forEach(item => {
+        const width = (Math.max(0, Number(item.pct_change)) / maxImproved) * 100;
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.country}</td>
+          <td>${formatNumber(item.pct_change, 1)}%</td>
+          <td>
+            <div class="progress-track"><div class="progress-fill good" style="width:${width.toFixed(1)}%"></div></div>
+          </td>
+        `;
+        improvedBody.appendChild(row);
+      });
+    }
+
+    async function openCountryModal(iso3) {
+      const modal = document.getElementById('countryModal');
+      modal.classList.add('open');
+      document.getElementById('modalTitle').textContent = 'Loading country details...';
+      document.getElementById('modalSubtitle').textContent = 'Fetching historical and forecast series';
+      document.getElementById('modalMeta').innerHTML = '';
+      document.getElementById('modalStats').innerHTML = '';
+
+      try {
+        const [detail, prediction] = await Promise.all([
+          safeFetch(`/countries/${iso3}`, `country-detail-${iso3}`),
+          postWithCache('/predict/country', { iso3, forecast_years: 10 }, `country-forecast-${iso3}`),
+        ]);
+
+        state.selectedCountry = iso3;
+        state.modalPayload = prediction;
+
+        const info = detail.country_info;
+        const historical = prediction.historical || [];
+        const forecast = prediction.forecast || [];
+
+        document.getElementById('modalTitle').textContent = `${info.country} (${info.iso3})`;
+        document.getElementById('modalSubtitle').textContent = `${info.continent} • ${info.hdi_group} • ${info.undp_region}`;
+
+        const metaRows = [
+          { label: 'Latest MMR', value: formatNumber(info.latest_mmr, 2) },
+          { label: 'MMR in 1990', value: formatNumber(info.mmr_1990, 2) },
+          { label: '% Reduction', value: `${formatNumber(info.pct_change, 2)}%` },
+          { label: 'Forecast Horizon', value: `${forecast.length} years` },
+        ];
+
+        document.getElementById('modalMeta').innerHTML = metaRows
+          .map(item => `<div class="meta-item"><small>${item.label}</small><strong>${item.value}</strong></div>`)
+          .join('');
+
+        renderCountryModalChart(historical, forecast);
+
+        const first = historical[0]?.mmr ?? 0;
+        const last = historical[historical.length - 1]?.mmr ?? 0;
+        const years = Math.max(1, historical.length - 1);
+        const reductionPct = first > 0 ? ((first - last) / first) * 100 : 0;
+        const avgDecline = (first - last) / years;
+
+        document.getElementById('modalStats').innerHTML = `
+          <span class="chip">Reduction Since 1990: ${formatNumber(reductionPct, 2)}%</span>
+          <span class="chip">Avg Annual Decline: ${formatNumber(avgDecline, 2)} MMR/year</span>
+          <span class="chip">Model R²: ${formatNumber(prediction.model_metrics.r2, 4)}</span>
+        `;
+      } catch (error) {
+        document.getElementById('modalTitle').textContent = 'Unable to load country data';
+        document.getElementById('modalSubtitle').textContent = String(error.message || error);
+      }
+    }
+
+    function renderCountryModalChart(historical, forecast) {
+      if (state.charts.country) {
+        state.charts.country.destroy();
+      }
+
+      const historicalPoints = historical.map(item => ({ x: Number(item.year), y: Number(item.mmr) }));
+      const forecastPoints = forecast.map(item => ({ x: Number(item.year), y: Number(item.predicted_mmr) }));
+      const lowerPoints = forecast.map(item => ({ x: Number(item.year), y: Number(item.lower) }));
+      const upperPoints = forecast.map(item => ({ x: Number(item.year), y: Number(item.upper) }));
+
+      const keyMarkers = historical
+        .filter(item => [2000, 2010, 2021].includes(Number(item.year)))
+        .map(item => ({ x: Number(item.year), y: Number(item.mmr) }));
+
+      const context = document.getElementById('countryChart').getContext('2d');
+      state.charts.country = new Chart(context, {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              label: 'Historical MMR',
+              data: historicalPoints,
+              borderColor: '#4fa3ff',
+              backgroundColor: 'rgba(79, 163, 255, 0.18)',
+              borderWidth: 2.3,
+              pointRadius: 0,
+              tension: 0.2,
+              yAxisID: 'y',
+            },
+            {
+              label: 'Lower CI',
+              data: lowerPoints,
+              borderColor: 'rgba(0,0,0,0)',
+              pointRadius: 0,
+              yAxisID: 'y1',
+            },
+            {
+              label: 'Upper CI',
+              data: upperPoints,
+              borderColor: 'rgba(0,0,0,0)',
+              pointRadius: 0,
+              fill: '-1',
+              backgroundColor: 'rgba(0, 212, 170, 0.18)',
+              yAxisID: 'y1',
+            },
+            {
+              label: 'Forecast MMR',
+              data: forecastPoints,
+              borderColor: '#00d4aa',
+              backgroundColor: 'rgba(0, 212, 170, 0.2)',
+              borderWidth: 2.4,
+              pointRadius: 2.2,
+              pointHoverRadius: 4,
+              tension: 0.25,
+              yAxisID: 'y1',
+            },
+            {
+              label: 'Key Year Marker',
+              data: keyMarkers,
+              type: 'scatter',
+              pointRadius: 4,
+              pointBackgroundColor: '#ffd166',
+              pointBorderColor: '#0a0e1a',
+              pointBorderWidth: 1.4,
+              yAxisID: 'y',
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'nearest', intersect: false },
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: {
+              callbacks: {
+                label: contextPoint => {
+                  const value = contextPoint.raw?.y;
+                  return `${contextPoint.dataset.label}: ${formatNumber(value, 2)}`;
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              title: { display: true, text: 'Year' },
+              ticks: { precision: 0 },
+            },
+            y: {
+              position: 'left',
+              title: { display: true, text: 'Historical MMR' },
+            },
+            y1: {
+              position: 'right',
+              title: { display: true, text: 'Forecast MMR' },
+              grid: { drawOnChartArea: false },
+            },
+          },
+        },
+      });
+    }
+
+    function downloadForecastCsv() {
+      if (!state.modalPayload) {
+        setStatus('No forecast available for CSV download yet.', true);
+        return;
+      }
+
+      const rows = [['year', 'predicted_mmr', 'lower', 'upper']];
+      state.modalPayload.forecast.forEach(point => {
+        rows.push([point.year, point.predicted_mmr, point.lower, point.upper]);
+      });
+
+      const csv = rows.map(row => row.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `${state.modalPayload.iso3}_forecast.csv`;
+      anchor.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function closeCountryModal() {
+      document.getElementById('countryModal').classList.remove('open');
+    }
+
+    function animateCounter(element, value) {
+      const finalValue = Math.max(0, Number(value) || 0);
+      const duration = 900;
+      const start = performance.now();
+
+      function step(timestamp) {
+        const progress = Math.min((timestamp - start) / duration, 1);
+        const current = finalValue * (1 - Math.pow(1 - progress, 3));
+        element.textContent = formatNumber(current, 2);
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    async function handleCustomPrediction(event) {
+      event.preventDefault();
+
+      const payload = {
+        year: Number(document.getElementById('predYear').value),
+        hdi_rank: Number(document.getElementById('predHdiRank').value),
+        lag_1: Number(document.getElementById('predLag1').value),
+        lag_2: Number(document.getElementById('predLag2').value),
+        lag_3: Number(document.getElementById('predLag3').value),
+        rolling_mean_5: Number(document.getElementById('predRolling').value),
+        mmr_change: Number(document.getElementById('predLag1').value) - Number(document.getElementById('predLag2').value),
+        continent: document.getElementById('predContinent').value,
+        hdi_group: document.getElementById('predHdiGroup').value,
+        undp_region: document.getElementById('predUndp').value,
+      };
+
+      try {
+        const result = await postWithCache('/predict/single', payload, `single-predict-${JSON.stringify(payload)}`);
+        const prediction = Number(result.predicted_mmr || 0);
+
+        const valueEl = document.getElementById('predictionValue');
+        animateCounter(valueEl, prediction);
+
+        const risk = getRiskLevel(prediction);
+        const badge = document.getElementById('riskBadge');
+        badge.className = `risk-badge ${risk.cls}`;
+        badge.textContent = `${risk.label} Risk`;
+      } catch (error) {
+        setStatus(`Prediction failed: ${error.message}`, true);
+      }
+    }
+
+    function bindEvents() {
+      document.getElementById('searchInput').addEventListener('input', event => {
+        state.filters.search = event.target.value.trim();
+        state.pagination.page = 1;
+        renderCountryGrid();
+      });
+
+      document.getElementById('continentFilter').addEventListener('change', event => {
+        state.filters.continent = event.target.value;
+        state.pagination.page = 1;
+        renderCountryGrid();
+      });
+
+      document.getElementById('hdiFilter').addEventListener('change', event => {
+        state.filters.hdiGroup = event.target.value;
+        state.pagination.page = 1;
+        renderCountryGrid();
+      });
+
+      document.getElementById('undpFilter').addEventListener('change', event => {
+        state.filters.undpRegion = event.target.value;
+        state.pagination.page = 1;
+        renderCountryGrid();
+      });
+
+      document.getElementById('sortFilter').addEventListener('change', event => {
+        state.filters.sort = event.target.value;
+        renderCountryGrid();
+      });
+
+      document.getElementById('resetFiltersBtn').addEventListener('click', () => {
+        state.filters = { continent: 'all', hdiGroup: 'all', undpRegion: 'all', search: '', sort: 'mmr_desc' };
+
+        document.getElementById('searchInput').value = '';
+        document.getElementById('continentFilter').value = 'all';
+        document.getElementById('hdiFilter').value = 'all';
+        document.getElementById('undpFilter').value = 'all';
+        document.getElementById('sortFilter').value = 'mmr_desc';
+
+        state.pagination.page = 1;
+        renderCountryGrid();
+      });
+
+      document.getElementById('prevPageBtn').addEventListener('click', () => {
+        if (state.pagination.page > 1) {
+          state.pagination.page -= 1;
+          renderCountryGrid();
+        }
+      });
+
+      document.getElementById('nextPageBtn').addEventListener('click', () => {
+        const totalPages = Math.max(1, Math.ceil(state.filteredCountries.length / state.pagination.pageSize));
+        if (state.pagination.page < totalPages) {
+          state.pagination.page += 1;
+          renderCountryGrid();
+        }
+      });
+
+      document.getElementById('closeModalBtn').addEventListener('click', closeCountryModal);
+      document.getElementById('countryModal').addEventListener('click', event => {
+        if (event.target.id === 'countryModal') {
+          closeCountryModal();
+        }
+      });
+
+      document.getElementById('downloadForecastBtn').addEventListener('click', downloadForecastCsv);
+      document.getElementById('predictionForm').addEventListener('submit', handleCustomPrediction);
+
+      document.getElementById('retrainBtn').addEventListener('click', async event => {
+        const button = event.currentTarget;
+        button.disabled = true;
+        button.textContent = 'Retraining...';
+
+        try {
+          showLoading('Retraining model on current dataset...');
+          const response = await fetch(`${API}/model/retrain`);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          state.modelMetrics = await response.json();
+          updateModelMetricsBadge();
+          renderFeatureImportance(state.modelMetrics);
+          setStatus('Model retraining complete. Metrics refreshed.');
+        } catch (error) {
+          setStatus(`Retrain failed: ${error.message}`, true);
+        } finally {
+          hideLoading();
+          button.disabled = false;
+          button.textContent = 'Retrain Model';
+        }
+      });
+    }
+
+    async function init() {
+      showLoading('Booting mission-control analytics pipeline...');
+
+      try {
+        await ensureChartJs();
+        bindEvents();
+
+        await Promise.all([
+          fetchCountries(),
+          fetchAnalytics(),
+          fetchModelMetrics(),
+          fetchCorrelation(),
+        ]);
+
+        populateFilterOptions();
+        updateOverviewStats();
+        updateModelMetricsBadge();
+
+        renderCountryGrid();
+        renderContinentChart(state.continentData);
+        renderHDIChart(state.hdiData);
+        renderFeatureImportance(state.modelMetrics);
+        renderTopTables(state.topWorst);
+        renderCorrelationChart();
+
+        setStatus('Dashboard online. Live endpoints connected.');
+      } catch (error) {
+        setStatus(`Initialization failed: ${error.message}`, true);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
